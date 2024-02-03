@@ -4,31 +4,35 @@ document.addEventListener('DOMContentLoaded', function() {
     var adsToggle = document.getElementById('adsToggle');
     var hideSponsoredToggle = document.getElementById('hideSponsoredToggle');
 
-    reelsToggle.checked = localStorage.getItem('hideReels') === 'true';
-    adsToggle.checked = localStorage.getItem('blockAds') === 'true';
-    hideSponsoredToggle.checked = localStorage.getItem('hideSponsored') === 'true';
+    if (reelsToggle) {
+        reelsToggle.checked = localStorage.getItem('hideReels') === 'true';
+        reelsToggle.addEventListener('change', function() {
+            localStorage.setItem('hideReels', reelsToggle.checked);
+        });
+    } else {
+        console.error("Element with ID 'reelsToggle' not found in the document.");
+    }
 
-    // Save checkbox state to local storage when the checkbox is changed
-    reelsToggle.addEventListener('change', function() {
-        localStorage.setItem('hideReels', reelsToggle.checked);
+    if (adsToggle) {
+        adsToggle.checked = localStorage.getItem('blockAds') === 'true';
+        adsToggle.addEventListener('change', function() {
+            localStorage.setItem('blockAds', adsToggle.checked);
+        });
+    } else {
+        console.error("Element with ID 'adsToggle' not found in the document.");
+    }
+
+    if (hideSponsoredToggle) {
+        hideSponsoredToggle.checked = localStorage.getItem('hideSponsored') === 'true';
+        hideSponsoredToggle.addEventListener('change', function() {
+            localStorage.setItem('hideSponsored', hideSponsoredToggle.checked);
+        });
+    } else {
+        console.error("Element with ID 'hideSponsoredToggle' not found in the document.");
+    }  
+
+    // jQuery code
+    $('#refresh').click(function() {
+        chrome.tabs.reload();
     });
-
-    adsToggle.addEventListener('change', function() {
-        localStorage.setItem('blockAds', adsToggle.checked);
-    });
-
-    hideSponsoredToggle.addEventListener('change', function() {
-        localStorage.setItem('hideSponsored', hideSponsoredToggle.checked);
-    });
-
-    var reels = document.querySelectorAll('[aria-label="Reel"]'); // Assuming reels are identified by aria-label attribute
-   if (reels.length > 0) {
-       reels.forEach(function(reel) {
-           reel.style.display = 'none';
-       });
-   }
-
-   $('#refresh').click(function() {
-       chrome.tabs.reload();
-   });
 });
