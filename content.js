@@ -4,7 +4,6 @@ const pattern = /Reels and Short Videos/i; // Case-insensitive pattern
 // Function to hide elements
 function hideElement(element) {
   element.style.display = "none";
-  console.log("Element hidden:", element);
 }
 
 // Function to check if the text matches the pattern
@@ -68,41 +67,61 @@ function hideVideosMenu() {
 }
 
 // Create a Mutation Observer to watch for changes in the DOM
-const observer = new MutationObserver(function (mutations) {
-  mutations.forEach(function (mutation) {
-    // Check if nodes were added to the DOM
-    if (mutation.addedNodes.length > 0) {
-      // Iterate through the added nodes
-      mutation.addedNodes.forEach(function (node) {
-        shouldHideElement(node);
-      });
-    }
-  });
-});
+let observer;
 
-// Function to check if the added node or its descendants match the criteria
-function shouldHideElement(node) {
-  if (node && node?.querySelectorAll && typeof node.querySelectorAll === 'function') {
-      var elements = node.querySelectorAll('.x1yztbdb');
-      elements.forEach((item) => {
-          if (textMatchesPattern(item.textContent)) {
-              // Hide the element
-              hideElement(item);
-          }
+function setupMutationObserver() {
+  try {
+    observer = new MutationObserver(function (mutations) {
+      mutations.forEach(function (mutation) {
+        // Check if nodes were added to the DOM
+        if (mutation.addedNodes.length > 0) {
+          // Iterate through the added nodes
+          mutation.addedNodes.forEach(function (node) {
+            shouldHideElement(node);
+          });
+        }
       });
-      hideAdsAndSponsoredContent();
-      hideVideosMenu();
-  } else {
-      console.error('Invalid node or node does not support querySelectorAll');
+    });
+
+    // Start observing changes in the entire document
+    observer.observe(document, { childList: true, subtree: true });
+  } catch (error) {
+    console.error("Error setting up Mutation Observer:", error);
+    // Restart the setup after a delay
+    setTimeout(setupMutationObserver, 5000); // Retry after 5 seconds
   }
 }
 
 
-// Start observing changes in the entire document
-observer.observe(document, { childList: true, subtree: true });
-document.addEventListener("DOMContentLoaded", function () {
+// Function to check if the added node or its descendants match the criteria
+function shouldHideElement(node) {
+  if (node && typeof node.querySelectorAll === "function") {
+    var elements = node.querySelectorAll(".x1yztbdb");
+    elements.forEach((item) => {
+      if (textMatchesPattern(item?.textContent)) {
+        // Hide the element
+        hideElement(item);
+      }
+    });
+    hideAdsAndSponsoredContent();
+    hideVideosMenu();
+  } else {
+    console.log("Invalid node or node does not support querySelectorAll");
+  }
+}
+
+
+
+try {
   hideElementsByDefault();
   hideReelsBasedOnPreference();
   hideAdsAndSponsoredContent();
   hideVideosMenu();
-});
+  setupMutationObserver();
+} catch (error) {
+  console.error("Error during initial setup:", error);
+  // Restart the setup after a delay
+  setTimeout(() => {
+    window.location.reload(); // Refresh the page to restart the script
+  }, 5000); // Retry after 5 seconds
+}
