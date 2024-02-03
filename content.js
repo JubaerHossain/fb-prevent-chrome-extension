@@ -4,7 +4,7 @@ const pattern = /Reels and Short Videos/i; // Case-insensitive pattern
 // Function to hide elements
 function hideElement(element) {
   element.style.display = "none";
-  console.log("Hide element with text: " + element.textContent);
+  console.log("Element hidden:", element);
 }
 
 // Function to check if the text matches the pattern
@@ -60,6 +60,13 @@ function hideAdsAndSponsoredContent() {
   }
 }
 
+function hideVideosMenu() {
+  const videosMenu = document.querySelector('[href="/reel/"]');
+  if (videosMenu) {
+      hideElement(videosMenu);
+  }
+}
+
 // Create a Mutation Observer to watch for changes in the DOM
 const observer = new MutationObserver(function (mutations) {
   mutations.forEach(function (mutation) {
@@ -75,19 +82,21 @@ const observer = new MutationObserver(function (mutations) {
 
 // Function to check if the added node or its descendants match the criteria
 function shouldHideElement(node) {
-  if (node && typeof node.querySelectorAll === "function") {
-    var elements = node.querySelectorAll(".x1yztbdb");
-    elements.forEach((item) => {
-      if (textMatchesPattern(item.textContent)) {
-        // Hide the element
-        hideElement(item);
-      }
-    });
-    hideAdsAndSponsoredContent();
+  if (node && node?.querySelectorAll && typeof node.querySelectorAll === 'function') {
+      var elements = node.querySelectorAll('.x1yztbdb');
+      elements.forEach((item) => {
+          if (textMatchesPattern(item.textContent)) {
+              // Hide the element
+              hideElement(item);
+          }
+      });
+      hideAdsAndSponsoredContent();
+      hideVideosMenu();
   } else {
-    console.error("Invalid node or node does not support querySelectorAll");
+      console.error('Invalid node or node does not support querySelectorAll');
   }
 }
+
 
 // Start observing changes in the entire document
 observer.observe(document, { childList: true, subtree: true });
@@ -95,4 +104,5 @@ document.addEventListener("DOMContentLoaded", function () {
   hideElementsByDefault();
   hideReelsBasedOnPreference();
   hideAdsAndSponsoredContent();
+  hideVideosMenu();
 });
