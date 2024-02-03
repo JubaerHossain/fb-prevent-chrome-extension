@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Extension Settings</title>
+    <link rel="stylesheet" href="popup.css" />
+  </head>
+  <body>
+    <div class="container">
+      <h1>Extension Settings</h1>
+      <div class="setting">
+        <h3>Hide Reels</h3>
+        <label class="switch">
+          <input type="checkbox" id="reelsToggle" />
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="setting">
+        <h3>Block Ads</h3>
+        <label class="switch">
+          <input type="checkbox" id="adsToggle" />
+          <span class="slider"></span>
+        </label>
+      </div>
+
+      <div>
+        <button class="btn-primary" type="button" id="refresh">Refresh</button>
+      </div>
+      <!-- Add more settings here -->
+    </div>
+    <div id="lol"></div>
+    <script src="external/jquery.min.js"></script>
+    <script src="popup.js"></script>
+  </body>
+</html>
