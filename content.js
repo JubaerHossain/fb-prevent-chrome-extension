@@ -13,19 +13,45 @@ function textMatchesPattern(text) {
 
 // Function to hide reels based on user preference
 function hideElements() {
-    // Retrieve user preference from localStorage
+    // Retrieve user preferences from localStorage
     const hideReels = localStorage.getItem('hideReels') === 'true';
+    const blockAds = localStorage.getItem('blockAds') === 'true';
+    const hideSponsored = localStorage.getItem('hideSponsored') === 'true'; // New preference for sponsored posts
+
 
     // Get all elements with the specified class name
     const elements = document.querySelectorAll('.x1yztbdb');
 
     // Iterate through the elements
     elements.forEach(function (element) {
+      console.log(element);
         // Check if the element's text content matches the pattern and hide if necessary
         if ((hideReels && textMatchesPattern(element.textContent)) || element.getAttribute('aria-label') === 'Reel') {
             hideElement(element);
         }
+        
+        // Check if the element represents an ad and hide if necessary
+        if (blockAds && isAdElement(element)) {
+            hideElement(element);
+        }
+
+        if (hideSponsored && isSponsoredPost(element)) {
+          hideElement(element);
+      }
     });
+}
+
+// Function to check if an element represents an ad
+function isAdElement(element) {
+    // Customize this function based on how you identify ads on Facebook
+    // For example, you can check for specific classes, attributes, or text content
+    return element.classList.contains('fbAdClass');
+}
+
+function isSponsoredPost(element) {
+  // Customize this function based on how you identify sponsored posts on Facebook
+  // For example, you can check for specific classes, attributes, or text content
+  return element.classList.contains('sponsoredPostClass');
 }
 
 // Create a Mutation Observer to watch for changes in the DOM
@@ -47,6 +73,12 @@ function shouldHideElement(node) {
         const elements = node.querySelectorAll('.x1yztbdb');
         elements.forEach((item) => {
             if ((localStorage.getItem('hideReels') === 'true' && textMatchesPattern(item.textContent)) || item.getAttribute('aria-label') === 'Reel') {
+                hideElement(item);
+            }
+            if (localStorage.getItem('blockAds') === 'true' && isAdElement(item)) {
+                hideElement(item);
+            }
+            if (localStorage.getItem('hideSponsored') === 'true' && isSponsoredPost(item)) {
                 hideElement(item);
             }
         });
